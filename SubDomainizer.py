@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #######################################
 #    Author: Neeraj Sonaniya          #
@@ -40,7 +40,7 @@ parse.add_argument('-c', '--cookie',
 parse.add_argument('-cop', '--cloudop',
                    help="Enter the file name in which you want to save results of cloud services finding.")
 parse.add_argument('-sop', '--secretop',
-                   help="Enter the file name in which you want to save results of secrets found.") 
+                   help="Enter the file name in which you want to save results of secrets found.")
 parse.add_argument(
     '-d', '--domain', help="Enter the top-level-domain to extract all the subdomain of that specific domain")
 parse.add_argument(
@@ -54,7 +54,8 @@ parse.add_argument('-l', '--listfile',
                    help="List file which contain list of URLs to be scanned for subdomains")
 parse.add_argument('-o', '--output',
                    help="Enter the file name to which you want to save the results of subdomains found.")
-parse.add_argument('-san', '--subject_alt_name', help="Get Subject Alternative Names, Options: 'all', 'same'")
+parse.add_argument('-san', '--subject_alt_name',
+                   help="Get Subject Alternative Names, Options: 'all', 'same'")
 parse.add_argument(
     '-u', '--url', help="Enter the URL in which you want to find (sub)domains.")
 
@@ -83,7 +84,8 @@ if args.cookie:
     heads = {"Cookie": args.cookie,
              "User-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/70.0"}
 else:
-    heads = {"User-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/70.0"}
+    heads = {
+        "User-agent": "Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101 Firefox/70.0"}
 
 
 def argerror(urls, listfile):
@@ -118,7 +120,8 @@ def gitArgError(gitToken, isGit):
         This argument will be used to tell the program to scan GitHub for information.
     """
     if (gitToken is None and isGit is not None) or (gitToken is not None and isGit is None):
-        print("Either both '-g' and '-gt' arguments are required or none required. Exiting...")
+        print(
+            "Either both '-g' and '-gt' arguments are required or none required. Exiting...")
         sys.exit(1)
     else:
         pass
@@ -290,7 +293,8 @@ class JsExtract:
                 finallist.append(content)
                 new_final_dict[str(js)] = content
             else:
-                content = unquote(requests.get(js, headers=heads).content.decode('utf-8'))
+                content = unquote(requests.get(
+                    js, headers=heads).content.decode('utf-8'))
                 finallist.append(content)
                 new_final_dict[str(js)] = content
         except:
@@ -419,7 +423,7 @@ def PreCompiledRegexSecret():
 
     return re.compile(r'(["\']?[\\w\-]*(?:' + '|'.join(seclst) + ')[\\w\\-]*[\\s]*["\']?[\\s]*(?:' + '|'.join(
         equal) + ')[\\s]*["\']?([\\w\\-/~!@#$%^*+.]+=*)["\']?)',
-                      re.MULTILINE | re.IGNORECASE)
+        re.MULTILINE | re.IGNORECASE)
 
 
 def PreCompiledRegexCloud():
@@ -696,6 +700,7 @@ def savecloudresults():
         for item in cloudurlset:
             f.write(item + '\n')
 
+
 def savesecretsresults():
     """
     This function will save secret data into the given file.
@@ -776,7 +781,8 @@ if __name__ == "__main__":
                 for matchNum, match in enumerate(matches):
                     if entropy(match.group(2)) > 3.5:
                         # secretList.add(match.group())
-                        _path = os.path.normpath(os.path.join(os.getcwd(), path))
+                        _path = os.path.normpath(
+                            os.path.join(os.getcwd(), path))
                         if _path in secret_dict:
                             secret_dict[_path].append(str(match.group()))
                         else:
@@ -860,7 +866,8 @@ if __name__ == "__main__":
                         termcolor.colored('Finding Subdomains and secrets from Github..Please wait...', color='yellow',
                                           attrs=['bold']))
                     print(termcolor.colored(
-                        'Searching in github for : ' + termcolor.colored(item, color='green', attrs=['bold']),
+                        'Searching in github for : ' +
+                        termcolor.colored(item, color='green', attrs=['bold']),
                         color='blue',
                         attrs=['bold']))
 
@@ -872,14 +879,15 @@ if __name__ == "__main__":
                     try:
                         gitContentThread.starmap(getInfoFromData,
                                                  zip(git_data.keys(), git_data.values(), repeat(compiledRegexCloud),
-                                                     repeat(compiledRegexSecretList),
-                                                     repeat(compiledRegexDomain), repeat(compiledRegexIP),
+                                                     repeat(
+                                                         compiledRegexSecretList),
+                                                     repeat(compiledRegexDomain), repeat(
+                                                         compiledRegexIP),
                                                      repeat(item)))
                     except:
                         pass
                     print(termcolor.colored(
                         'Completed finding from github...', color='blue', attrs=['bold']))
-
 
     except KeyboardInterrupt:
         print(termcolor.colored("\nKeyboard Interrupt. Exiting...\n",
@@ -901,20 +909,20 @@ if __name__ == "__main__":
     if cloudop:
         print(
             termcolor.colored("\nWriting all the cloud services URL's to given file...", color='yellow',
-                                attrs=['bold']))
+                              attrs=['bold']))
         savecloudresults()
         print(
             termcolor.colored("Written cloud services URL's in file: ", color='red',
                               attrs=['bold']) + cloudop)
 
     if secretop:
-        print(termcolor.colored("\nWriting all the secrets to given file...", color='yellow', attrs=['bold']))
+        print(termcolor.colored(
+            "\nWriting all the secrets to given file...", color='yellow', attrs=['bold']))
         savesecretsresults()
         print(termcolor.colored("Written secrets in file: ", color='red',
                                 attrs=['bold']) + secretop)
-    
-    print(termcolor.colored('_' * 60, color='white', attrs=['bold']))
 
+    print(termcolor.colored('_' * 60, color='white', attrs=['bold']))
 
     if finalset:
         print(termcolor.colored("\nGot some subdomains...", color='yellow',
@@ -938,7 +946,7 @@ if __name__ == "__main__":
         print(termcolor.colored('_' * 60, color='white', attrs=['bold']))
         print(termcolor.colored("\nFound some secrets(might be false positive)...", color='yellow',
                                 attrs=['bold']))
-                                
+
         print(termcolor.colored('Total Possible Secrets: ' +
                                 str(sum(len(sec_lst) for sec_lst in secret_dict.values())), color='red',
                                 attrs=['bold']))
@@ -972,12 +980,14 @@ if __name__ == "__main__":
                     hostname = q.get()
                     if is_san == "same":
                         if hostname not in printed and hostname not in finalset and hostname.endswith(tld):
-                            print(termcolor.colored(hostname, color='green', attrs=['bold']))
+                            print(termcolor.colored(
+                                hostname, color='green', attrs=['bold']))
                             nothing_found_flag = False
                             printed.add(hostname)
                     elif is_san == "all":
                         if hostname not in printed and hostname not in finalset:
-                            print(termcolor.colored(hostname, color='green', attrs=['bold']))
+                            print(termcolor.colored(
+                                hostname, color='green', attrs=['bold']))
                             nothing_found_flag = False
                             printed.add(hostname)
 
@@ -1000,7 +1010,8 @@ if __name__ == "__main__":
                     sys.exit(1)
 
         if nothing_found_flag:
-            print(termcolor.colored("No SANs found.", color='green', attrs=['bold']))
+            print(termcolor.colored("No SANs found.",
+                                    color='green', attrs=['bold']))
 
     print(termcolor.colored('\n' + '_' * 23 + 'End of Results' +
                             '_' * 23 + '\n', color='white', attrs=['bold']))
